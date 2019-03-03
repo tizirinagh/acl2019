@@ -1,49 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Data Programing for Learning Discourse Structure</title>
+<title>Data Programming for Learning Discourse Structure</title>
 </head>
 <body>
-
-
-
-<h1 style="text-align: center;"> Data Programing for Learning Discourse Structure</h1>
+<h1 style="text-align: center;"> Data Programming for Learning Discourse Structure</h1>
 <p style="text-align: right;">Work in progress_ <strong>ACL 2019</strong></p>
-<hr />
-
-
-<h3 id="graphs"><a href="stac_graphs_dev_all9/graphs.html"> Link to the graphs</a> of the outputs of our 9 LFs on the developpement set.</h3>
-
-<h2 id="Code"><strong>Code </strong></h2>
-
-
-<p><a href="pageResult.html">- Result LF </a></p>
-<p><a href="pageSequence.html">- Sequence LF </a></p>
-<p><a href="pageQAP.html">- Question_answer_pair (QAP) LF</a></p>
-<p><a href="pageContinuation.html">- Continuation LF</a></p>
-<p><a href="pageComment.html">- Comment LF</a></p>
-<p><a href="pageConditional.html">- Conditional LF</a></p>
-<p><a href="pageAcknowledgement.html">- Acknowledgement LF</a></p>
-<p><a href="pageContrast.html">- Contrast LF</a></p>
-<p><a href="pageElaboration.html">- Elaboration LF</a></p>
-
-
-<p><a href="helperfunctions.html">- Helper functions (script used to abbreviate the code of LFs)</a></p>
-
-
-
-
-<h2 id="Performances"><strong>Performances of the LFs on the STAC developpement set</strong></h2>
-
-
-<img src="tablekt.png" />
-
-<p><strong>Table:</strong> Best score for each rule on our "sand box" data. Of course it's not surprising that the Linguistic-Linguistic only rules are the toughest.  </p>
-
-
-
-
-
+<hr/>
+<h2 id="Code"><u>Code</u></h2>
+<h4>Candidate generation:</h4>
+<p>The candidates are all pairs of segments or dialogue units (DUs) in a dialogue between which a attachement (of some relation type) is possible. Before applying the LFs to the STAC conversation data, we transformed the the dialogues into sets of candidates with the process described <a href="cands_gen.html">here</a>.</p>
+<h4>Individual LFs:</h4>
+<ul style="list-style: none;">
+<li><a href="pageAcknowledgement.html">Acknowledgement LF</a></li>
+<li><a href="pageComment.html">Comment LF</a></li>
+<li><a href="pageConditional.html">Conditional LF</a></li>
+<li><a href="pageContinuation.html">Continuation LF</a></li>
+<li><a href="pageContrast.html">Contrast LF</a></li>
+<li><a href="pageElaboration.html">Elaboration LF</a></li>
+<li><a href="pageQAP.html">Question-answer pair (QAP) LF</a></li>
+<li><a href="pageResult.html">Result LF </a></li>
+<li><a href="pageSequence.html">Sequence LF </a></li>
+</ul>
+<p><a href="helperfunctions.html">*Helper functions (called by LF functions)</a></p>
+<h2><u>Visualizations</u></h2>
+<p><a href="stac_graphs_dev_all9/graphs.html"> Link</a>  to the graphic representationsof the outputs of our LFs on the full development set.</p>
+<h2 id="Performances"><u>LF performances on the STAC development set</u></h2>
+<p align="justify">In order to write a set of LFs/rules which adequately covered the data, we had to find a way to reasonably divide and conquer the myriad characteristics of the relations. We started by focusing on relation type: for each of the nine most frequent relation types, we wrote a separate rule for each of the sets of endpoint types most prevalent for that relation. <strong>Result</strong> (RES) is the only relation type which was found between all four endpoint permutations: LL (linguistic source-linguistic target), LNL (linguistic source, non-linguistic target), etc..</p>
+<palign="justify">We used the relation behavoir observed in our development set to write and revise the rules. The dev set consisted of 3 games (10% of our data). In order to reduce run-time for each rule during development, we created "sandbox" sets for each relation type: smaller versions of the dev set which ignored all candidate pairs except those which could possibly be attached by the relation type in question.The table below shows the performance of each rule on its own "sandbox" dev set.</p>
+<figure>
+<img src="tablekt.png" width="600px" height="auto"/><figcaption>Table: Number of true positives, true negatives, false positives, false negatives and accuracy score for each LF when applied to the "sandbox" candidates from the STAC data.</figcaption></figure>
 </body>
 </html>
 

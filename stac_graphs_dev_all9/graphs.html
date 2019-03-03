@@ -12,24 +12,26 @@
 <p style="text-align: right;">Work in progress_ <strong>ACL 2019</strong></p>
 
 <hr />
+<h3>Development set:</h3>
+<ul style="list-style: none;">
+<li> <a href="./pilot03/subdocs.html" target="_blank">pilot03</a></li>
+<li> <a href="./s1_league1_game3/subdocs.html" target="_blank">s1_league1_game3</a></li>
+<li> <a href="./s2_leagueM_game3/subdocs.html" target="_blank">s2_leagueM_game3</a></li>
+</ul>
 
 
-<p>Attached in the left side are the graphs for the output of our 9 relations on the 3 dev games. </p>
-
-<p>- The blue arrows are True Pos (for attachments)</p>
-<p>- The magenta arrows are False Pos (for attachments)</p>
-<p>- The orange arrows are False Neg (for that relation type only)*</p>
-
-<p><em>*This means that a &lt;RELTYPE&gt; link should've been present between two nodes but wasn't.</em> </p>
-
-<p>On the right side, we have the graphs from the manually annotated dialogues.</p>
-
-<li> <a href="./pilot03/subdocs.html"</a>pilot03</a></li><li> <a href="./s1_league1_game3/subdocs.html"</a>s1_league1_game3</a></li>
+<figure>
+<img src="graph.png" width="600px" height="auto"/><figcaption>The two dialogue are identical in terms of dialogue units. The attachments in the left dialogue were made using the LFs, while the dialogue on the right was annotated by an expert. </figcaption></figure>
 
 
-<li> <a href="./s2_leagueM_game3/subdocs.html"</a>s2_leagueM_game3</a></li></ul>
-
-
+<p>While the relations in the expert-annotated dialogue are color-coded according to their type (relation-type appears on hover in the graphs of the games listed above), the relations in the "LF-generated" graph are color-coded according to whether the LF correctly or incorrectly attached the dialogue units:</p>
+<ul>
+<li>Blue == true positive attachments</li>
+<li>Magenta == false positive attachments</li>
+<li>Orange == false negative attachments, i.e. the units <em>should have</em> been attached</li>
+</ul>
+<p>*Note that we ignored for this study dialogues which contain only non-linguistic dialogue units. These still appear in the game graphs above, and should be disregarded.</p>
+<hr />
 </body>
 </html>
 

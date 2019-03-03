@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Data Programing for Learning Discourse Structure</title>
+</head>
+<body>
+<h2><a href="index.html"><strong>Home page </a></strong></h2>
+<h1 style="text-align: center;">Candidate Generation</h1>
+<p style="text-align: right;">Work in progress_ <strong>ACL 2019</strong></p>
+<hr />
+
+<h2><u>Data preparation</u></h2>
+
+<p>The full STAC corpus includes 2,593 dialogues (or discourse structures), 12,588 linguisticDUs, 31,811 non-linguistic DUs and 31,251 semantic relations</p>
+
+<p>As discussed in our paper, our task is to predict, for each dialogue, for each possible pair of DUs, whether the DUs are connected by a semantic relation, an operation which eventually yields a discourse structure for the dialogue. Before beginning our experiments, we implemented the following simplifying measures:</p>
+
+<ol>
+<li>Roughly 56% of the total dialogues contain only non-linguistic DUs. These represent player turns in which no players bargain or chat with one another. The annotations in these dialogues are fairly regular given the purely mechanical succession of DUs, and are much less difficult and less interesting from a discourse analysis perspective. For this reason We ignore these non-linguistic-only dialogues for our prediction task.</li>
+<li>In the corpus, shorter relations are more frequent than long-distance relations such that 67% of relations occur between adjacent DUs, and 98% of relations have a distance of 10 or less. (A relation of distance 10 stretches over 9 DUs between the source and the target DU.) In order to avoid a combinatory explosion of possible DU pairs, we restrict the relations we consider to a distance of 10 or less.</li>
+<li>Out of the 17 possible relation types allowed by SDRT, we consider only the 4 most frequent: Question-answer-pair, Sequence (temporal), Result (causal), Continuation (thematic continuity). We retain about 70% of the total relations. The reason for this choice will become apparent in following detailed discussion of labeling functions.</li>
+<li>Because we are here only interested in prediction simple attachments between single DUs, we "flatten" the CDUs by connecting all relations incoming or outgoing from a CDU to the "head" of the CDU, or its first DU. This results in shifts in the source and/or target DUs for about 40% of the relations.</li>
+</ol>
+
+<p>After the above preparation, the STAC corpus as we use it in our learning experiments includes 1,130 dialogues, 13,734 linguistic DUs, 18,767 non-linguistic DUs and 22,098 semantic relations.</p>
+
+<h2><u>Candidate ordering</u></h2>
+
+<p>Candidates are the units of data for which labels are predicted: they are pairs of dialogue units occurring in the same dialogue between which an attachment is possible. The LFs use "local" information to determine whether the dialogue units in a candidate are attached, such as dialogue unit type, speaker identity, raw text, dialogue and speech acts and distance between units.</p> 
+<p>However, in order to write LFs that might truly express the expert knowledge need to annotate the dialogues, we needed to give them access to more "global" contextual information, such as what has happened in the dialogue thus far, and between the units; what has been said, what attachments have already been made, etc. Indeed, this sort of contextual information becomes unweildy and not easily formatted for use by labeling functions. Our present solution is to fix the order in which each LF can "see" the candidates, such that it condiers adjacent DUs before distant DUs, and thus "knows" its current position in a dialogue. We also allowed LFs to keep track of previously predicted relations to give them some information about dialogue history.
+</p>
+
+<h4>Algorithm</h4>
+<p><strong>Ex.</strong> Given dialogue D with DUs A, B, C, D, appearing in that order, the set of possible candidates C is: {(A,B), (A,C), (A,D), (B,C), (B,D) and (C,D)}.</p>
+<p>To put the candidates in order of salient previous information, we use the code below, which for dialogue D would yield the following ordered list of candidates O: <br>[(A,B), (B,C), (A,C), (C,D), (B,D), (A,D)]</p>
+<p>As an LF is applied to O, it first sees, for each target unit, the immediately preceding source unit, followed by the source units at incrementally increasing distances to the target unit. Chronolgically speaking, an LF considers the immediate present before moving into the past of a dialogue, where it considers everything which took place before.</p>
+<p><strong>get_seg_list</strong> takes all of the source and target DUs in a dialogue and orders them chronologically.</p>
+<hr />
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">
+</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">get_seg_list</span>(table):
+    sources <span style="color: #333333">=</span> [<span style="color: #007020">tuple</span>(s) <span style="color: #008800; font-weight: bold">for</span> s <span style="color: #000000; font-weight: bold">in</span> table[[<span style="background-color: #fff0f0">&#39;source_id&#39;</span>, <span style="background-color: #fff0f0">&#39;source_span_end&#39;</span>]]<span style="color: #333333">.</span>drop_duplicates()<span style="color: #333333">.</span>get_values()<span style="color: #333333">.</span>tolist()]
+    targets <span style="color: #333333">=</span> [<span style="color: #007020">tuple</span>(t) <span style="color: #008800; font-weight: bold">for</span> t <span style="color: #000000; font-weight: bold">in</span> table[[<span style="background-color: #fff0f0">&#39;target_id&#39;</span>, <span style="background-color: #fff0f0">&#39;target_span_end&#39;</span>]]<span style="color: #333333">.</span>drop_duplicates()<span style="color: #333333">.</span>get_values()<span style="color: #333333">.</span>tolist()]
+    sources<span style="color: #333333">.</span>extend(targets)
+    combined <span style="color: #333333">=</span> <span style="color: #007020">list</span>(<span style="color: #007020">set</span>(sources))
+    combined<span style="color: #333333">.</span>sort(key<span style="color: #333333">=</span><span style="color: #008800; font-weight: bold">lambda</span> tup: tup[<span style="color: #0000DD; font-weight: bold">1</span>])
+    all_segs <span style="color: #333333">=</span> [c[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #008800; font-weight: bold">for</span> c <span style="color: #000000; font-weight: bold">in</span> combined]
+    <span style="color: #008800; font-weight: bold">return</span> all_segs
+</pre></td></tr></table></div>
+<p>For each dialogue, once the DUs are ordered, they are converted into an ordered list of candidates:</p>
+<hr />
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> </pre></td><td><pre style="margin: 0; line-height: 125%">
+dialogues <span style="color: #333333">=</span> cands<span style="color: #333333">.</span>dialogue_num<span style="color: #333333">.</span>drop_duplicates()
+
+<span style="color: #008800; font-weight: bold">for</span> d <span style="color: #000000; font-weight: bold">in</span> tqdm(dialogues):
+ 
+    <span style="color: #888888"># 2 -- get segment list</span>
+    seg_list <span style="color: #333333">=</span> get_seg_list(cands[cands<span style="color: #333333">.</span>dialogue_num <span style="color: #333333">==</span> d])
+
+    <span style="color: #888888"># 3 -- create seg pairs list</span>
+    seg_pairs <span style="color: #333333">=</span> []
+    <span style="color: #008800; font-weight: bold">for</span> i, s <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">enumerate</span>(seg_list):
+        <span style="color: #008800; font-weight: bold">for</span> n <span style="color: #000000; font-weight: bold">in</span> [j <span style="color: #008800; font-weight: bold">for</span> j <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">reversed</span>(<span style="color: #007020">range</span>((i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">20</span>, i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)) <span style="color: #008800; font-weight: bold">if</span> j<span style="color: #333333">&gt;=</span><span style="color: #0000DD; font-weight: bold">0</span>]:
+            <span style="color: #008800; font-weight: bold">try</span>:
+                seg_pairs<span style="color: #333333">.</span>append((seg_list[n], seg_list[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>]))   
+            <span style="color: #008800; font-weight: bold">except</span> <span style="color: #FF0000; font-weight: bold">IndexError</span>:
+                <span style="color: #008800; font-weight: bold">pass</span>  
+</pre></td></tr></table></div>
+
+<hr />
+
+
+
+</body>
+</html>
