@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Data Programming for Learning Discourse Structure</title>
+</head>
+<body>
+<h2><a href="index.html"><strong>Home page </a></strong></h2>
+
+
+
+<h1 style="text-align: center;"> Helper Functions </h1>
+<p style="text-align: right;">Work in progress_ <strong>ACL 2019</strong></p>
+<hr />
+
+<p> Description goes here.</p>
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">1
+2
+3
+4
+5
+6
+7
+8</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">get_seg_list</span>(table):
+    sources <span style="color: #333333">=</span> [<span style="color: #007020">tuple</span>(s) <span style="color: #008800; font-weight: bold">for</span> s <span style="color: #000000; font-weight: bold">in</span> table[[<span style="background-color: #fff0f0">&#39;source_id&#39;</span>, <span style="background-color: #fff0f0">&#39;source_span_end&#39;</span>]]<span style="color: #333333">.</span>drop_duplicates()<span style="color: #333333">.</span>get_values()<span style="color: #333333">.</span>tolist()]
+    targets <span style="color: #333333">=</span> [<span style="color: #007020">tuple</span>(t) <span style="color: #008800; font-weight: bold">for</span> t <span style="color: #000000; font-weight: bold">in</span> table[[<span style="background-color: #fff0f0">&#39;target_id&#39;</span>, <span style="background-color: #fff0f0">&#39;target_span_end&#39;</span>]]<span style="color: #333333">.</span>drop_duplicates()<span style="color: #333333">.</span>get_values()<span style="color: #333333">.</span>tolist()]
+    sources<span style="color: #333333">.</span>extend(targets)
+    combined <span style="color: #333333">=</span> <span style="color: #007020">list</span>(<span style="color: #007020">set</span>(sources))
+    combined<span style="color: #333333">.</span>sort(key<span style="color: #333333">=</span><span style="color: #008800; font-weight: bold">lambda</span> tup: tup[<span style="color: #0000DD; font-weight: bold">1</span>])
+    all_segs <span style="color: #333333">=</span> [c[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #008800; font-weight: bold">for</span> c <span style="color: #000000; font-weight: bold">in</span> combined]
+    <span style="color: #008800; font-weight: bold">return</span> all_segs
+</pre></td></tr></table></div>
+
+
+
+
+<hr />
+
+
+
+<p>- Description .....</p>
+<hr />
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%">  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">re</span>
+
+card <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&#39;Soldier&#39;</span>, <span style="background-color: #fff0f0">&#39;Year of Plenty&#39;</span>, <span style="background-color: #fff0f0">&#39;Road Building&#39;</span>, <span style="background-color: #fff0f0">&#39;Monopoly&#39;</span>, <span style="background-color: #fff0f0">&#39;development&#39;</span>}
+building <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&#39;settlement&#39;</span>, <span style="background-color: #fff0f0">&#39;road&#39;</span>, <span style="background-color: #fff0f0">&#39;city&#39;</span>}
+money <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&#39;clay&#39;</span>, <span style="background-color: #fff0f0">&#39;ore&#39;</span>, <span style="background-color: #fff0f0">&#39;wood&#39;</span>, <span style="background-color: #fff0f0">&#39;sheep&#39;</span>, <span style="background-color: #fff0f0">&#39;wheat&#39;</span>}
+bank <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&#39;bank&#39;</span>, <span style="background-color: #fff0f0">&#39;port&#39;</span>}
+
+
+<span style="color: #888888"># variables</span>
+
+opinionWords <span style="color: #333333">=</span> [<span style="background-color: #fff0f0">&quot;sry&quot;</span>, <span style="background-color: #fff0f0">&quot;fair enough&quot;</span>, <span style="background-color: #fff0f0">&quot;gg&quot;</span>, <span style="background-color: #fff0f0">&quot;good game&quot;</span> ,<span style="background-color: #fff0f0">&quot;robbery&quot;</span>,<span style="background-color: #fff0f0">&quot;aww&quot;</span>,<span style="background-color: #fff0f0">&quot;snigger&quot;</span>,<span style="background-color: #fff0f0">&quot;ouch&quot;</span>, <span style="background-color: #fff0f0">&quot;cad&quot;</span>, <span style="background-color: #fff0f0">&quot;wow&quot;</span>,<span style="background-color: #fff0f0">&quot;bugger&quot;</span>,<span style="background-color: #fff0f0">&quot;woo&quot;</span>,<span style="background-color: #fff0f0">&quot;whoa&quot;</span>, <span style="background-color: #fff0f0">&quot;lovely&quot;</span>, <span style="background-color: #fff0f0">&quot;yay&quot;</span>, <span style="background-color: #fff0f0">&quot;shouldn&#39;t&quot;</span>,<span style="background-color: #fff0f0">&quot;impressed&quot;</span>, <span style="background-color: #fff0f0">&quot;better&quot;</span>, <span style="background-color: #fff0f0">&quot;no&quot;</span>, <span style="background-color: #fff0f0">&quot;oh no&quot;</span>, <span style="background-color: #fff0f0">&quot;fair&quot;</span>, <span style="background-color: #fff0f0">&quot;good&quot;</span>, <span style="background-color: #fff0f0">&quot;great&quot;</span>, <span style="background-color: #fff0f0">&quot;bad&quot;</span>, <span style="background-color: #fff0f0">&quot;nasty&quot;</span>, <span style="background-color: #fff0f0">&quot;sorry&quot;</span>, <span style="background-color: #fff0f0">&quot;fun&quot;</span>, <span style="background-color: #fff0f0">&quot;lol&quot;</span>, <span style="background-color: #fff0f0">&quot;haha&quot;</span>, <span style="background-color: #fff0f0">&quot;hmmm&quot;</span>, <span style="background-color: #fff0f0">&quot;sadly&quot;</span>, <span style="background-color: #fff0f0">&quot;fingers crossed&quot;</span>, <span style="background-color: #fff0f0">&quot;suck&quot;</span>, <span style="background-color: #fff0f0">&quot;yeah&quot;</span>, <span style="background-color: #fff0f0">&quot;enough&quot;</span>, <span style="background-color: #fff0f0">&quot;my point&quot;</span>, <span style="background-color: #fff0f0">&quot;i see&quot;</span>, <span style="background-color: #fff0f0">&quot;though&quot;</span>, <span style="background-color: #fff0f0">&quot;i think&quot;</span>]
+emojiManual <span style="color: #333333">=</span> [<span style="background-color: #fff0f0">&#39;\:\)&#39;</span>, <span style="background-color: #fff0f0">&#39;\:d&#39;</span>, <span style="background-color: #fff0f0">&#39;\:\(&#39;</span>, <span style="background-color: #fff0f0">&#39;\:\*\)&#39;</span>, <span style="background-color: #fff0f0">&#39;\:p&#39;</span>, <span style="background-color: #fff0f0">&#39;\:\/&#39;</span>, <span style="background-color: #fff0f0">&#39;\:9&#39;</span>, <span style="background-color: #fff0f0">&#39;\:o&#39;</span>, <span style="background-color: #fff0f0">&#39;\:s&#39;</span>]
+acknowl <span style="color: #333333">=</span> [<span style="background-color: #fff0f0">&quot;yep&quot;</span>, <span style="background-color: #fff0f0">&quot;yeah&quot;</span>, <span style="background-color: #fff0f0">&quot;cheers&quot;</span>, <span style="background-color: #fff0f0">&quot;sry&quot;</span>, <span style="background-color: #fff0f0">&quot;no point&quot;</span> ,<span style="background-color: #fff0f0">&quot;right&quot;</span> ,<span style="background-color: #fff0f0">&quot;ah&quot;</span> ,<span style="background-color: #fff0f0">&quot;no then&quot;</span>, <span style="background-color: #fff0f0">&quot;fair enough&quot;</span>, <span style="background-color: #fff0f0">&quot;np&quot;</span>, <span style="background-color: #fff0f0">&quot;ah&quot;</span>, <span style="background-color: #fff0f0">&quot;thanks&quot;</span>, <span style="background-color: #fff0f0">&quot;thank you&quot;</span>, <span style="background-color: #fff0f0">&quot;well&quot;</span>, <span style="background-color: #fff0f0">&quot;no worries&quot;</span>, <span style="background-color: #fff0f0">&quot;indeed&quot;</span> ,<span style="background-color: #fff0f0">&quot;cheers&quot;</span> ,<span style="background-color: #fff0f0">&quot;it is&quot;</span>,<span style="background-color: #fff0f0">&quot;even so&quot;</span>, <span style="background-color: #fff0f0">&quot;nah&quot;</span>, <span style="background-color: #fff0f0">&quot;true&quot;</span>,<span style="background-color: #fff0f0">&quot;ok&quot;</span>, <span style="background-color: #fff0f0">&quot;deal&quot;</span>, <span style="background-color: #fff0f0">&quot;thx&quot;</span>, <span style="background-color: #fff0f0">&quot;okay&quot;</span>, <span style="background-color: #fff0f0">&quot;excellent&quot;</span>, <span style="background-color: #fff0f0">&quot;yes&quot;</span>, <span style="background-color: #fff0f0">&quot;great&quot;</span>, <span style="background-color: #fff0f0">&quot;not&quot;</span>, <span style="background-color: #fff0f0">&quot;ahh&quot;</span>, <span style="background-color: #fff0f0">&quot;i see&quot;</span>, <span style="background-color: #fff0f0">&quot;yeah&quot;</span>, <span style="background-color: #fff0f0">&quot;sure&quot;</span>, <span style="background-color: #fff0f0">&quot;yup&quot;</span>, <span style="background-color: #fff0f0">&quot;cool&quot;</span>, <span style="background-color: #fff0f0">&quot;oh no&quot;</span>, <span style="background-color: #fff0f0">&quot;not&quot;</span>, <span style="background-color: #fff0f0">&quot;nop&quot;</span>, <span style="background-color: #fff0f0">&quot;meh&quot;</span>, <span style="background-color: #fff0f0">&quot;ill&quot;</span>,<span style="background-color: #fff0f0">&quot;i will&quot;</span>, <span style="background-color: #fff0f0">&quot;i&#39;ll&quot;</span>, <span style="background-color: #fff0f0">&quot;i&#39;ll do&quot;</span>, <span style="background-color: #fff0f0">&quot;done&quot;</span>, <span style="background-color: #fff0f0">&quot;right&quot;</span> ]
+explanationWords <span style="color: #333333">=</span> [<span style="background-color: #fff0f0">&quot;because&quot;</span> , <span style="background-color: #fff0f0">&quot;perhaps&quot;</span>, <span style="background-color: #fff0f0">&quot;just&quot;</span>, <span style="background-color: #fff0f0">&quot;since&quot;</span> ]
+Refusing <span style="color: #333333">=</span> [<span style="background-color: #fff0f0">&quot;no&quot;</span>, <span style="background-color: #fff0f0">&quot;nothing&quot;</span>, <span style="background-color: #fff0f0">&quot;sorry&quot;</span>, <span style="background-color: #fff0f0">&quot;nope&quot;</span>, <span style="background-color: #fff0f0">&quot;apologies&quot;</span>, <span style="background-color: #fff0f0">&quot;i can&#39;t help&quot;</span>, <span style="background-color: #fff0f0">&quot;neither&quot;</span>, <span style="background-color: #fff0f0">&quot;:(&quot;</span> , <span style="background-color: #fff0f0">&quot;none&quot;</span>, <span style="background-color: #fff0f0">&quot;haven&#39;t gotten&quot;</span>, <span style="background-color: #fff0f0">&quot;i don&#39;t have&quot;</span>]
+resultWords <span style="color: #333333">=</span> [ <span style="background-color: #fff0f0">&quot;so&quot;</span>, <span style="background-color: #fff0f0">&quot;accordingly&quot;</span> , <span style="background-color: #fff0f0">&quot;as a result&quot;</span>, <span style="background-color: #fff0f0">&quot;consequently&quot;</span>, <span style="background-color: #fff0f0">&quot;hence&quot;</span>, <span style="background-color: #fff0f0">&quot;in the end&quot;</span>, <span style="background-color: #fff0f0">&quot;now that&quot;</span>, <span style="background-color: #fff0f0">&quot;then&quot;</span>, <span style="background-color: #fff0f0">&quot;thereby&quot;</span>, <span style="background-color: #fff0f0">&quot;therefor&quot;</span>, <span style="background-color: #fff0f0">&quot;thus&quot;</span>]
+actWords <span style="color: #333333">=</span> [<span style="background-color: #fff0f0">&quot;gets&quot;</span>, <span style="background-color: #fff0f0">&quot;has&quot;</span>, <span style="background-color: #fff0f0">&quot;built&quot;</span>, <span style="background-color: #fff0f0">&quot;bought&quot;</span>, <span style="background-color: #fff0f0">&quot;move the robber&quot;</span>, <span style="background-color: #fff0f0">&quot;monopolized&quot;</span>, <span style="background-color: #fff0f0">&quot;traded&quot;</span>, <span style="background-color: #fff0f0">&quot;rejected trade&quot;</span>, <span style="background-color: #fff0f0">&quot;join&quot;</span>, <span style="background-color: #fff0f0">&quot;join the game&quot;</span>, <span style="background-color: #fff0f0">&quot;made an offer&quot;</span>, <span style="background-color: #fff0f0">&quot;roll&quot;</span>]
+commentWords <span style="color: #333333">=</span> [<span style="background-color: #fff0f0">&#39;!&#39;</span>, <span style="background-color: #fff0f0">&#39;...&#39;</span>, <span style="background-color: #fff0f0">&#39;lol&#39;</span>, <span style="background-color: #fff0f0">&#39;lulz&#39;</span>, <span style="background-color: #fff0f0">&#39;luck&#39;</span>, <span style="background-color: #fff0f0">&#39;sheesh&#39;</span>, <span style="background-color: #fff0f0">&#39;sorry&#39;</span>, <span style="background-color: #fff0f0">&#39;ouch&#39;</span>, <span style="background-color: #fff0f0">&#39;fingers.+crossed&#39;</span>, <span style="background-color: #fff0f0">&#39;uh.+oh&#39;</span>, <span style="background-color: #fff0f0">&#39;^what a&#39;</span>, <span style="background-color: #fff0f0">&#39;darn&#39;</span>, <span style="background-color: #fff0f0">&#39;damn&#39;</span>, <span style="background-color: #fff0f0">&#39;whoa&#39;</span>]
+gifts <span style="color: #333333">=</span> [ <span style="background-color: #fff0f0">&quot;Market&quot;</span>, <span style="background-color: #fff0f0">&quot;Gov.House&quot;</span>, <span style="background-color: #fff0f0">&quot;Chapel&quot;</span>, <span style="background-color: #fff0f0">&quot;University&quot;</span>, <span style="background-color: #fff0f0">&quot;Temple&quot;</span> ]
+helloWords <span style="color: #333333">=</span> [<span style="background-color: #fff0f0">&quot;hi&quot;</span>, <span style="background-color: #fff0f0">&quot;hey&quot;</span>, <span style="background-color: #fff0f0">&quot;hello&quot;</span>]
+
+<span style="color: #888888"># helper function</span>
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">joinedTheGame</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; joined the game&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">satDownAtSeat</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; sat down at seat [0-9]+&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">gamestatezero</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;Game state 0&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">gamestarted</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;Game started&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">boardlayoutset</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;Board layout set&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">Randomlypickingaplayer</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;Randomly picking a starting player...&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">itsXsTurnToBuildSettlement</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;&#39;s turn to build a settlement&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">XBuiltaP</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;built a &quot;</span> <span style="color: #333333">+</span> (<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(building)), text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">itsXsTurnToBuildP</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;&#39;s turn to build a &quot;</span> <span style="color: #333333">+</span> (<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(building)), text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">Xbuiltasettlement</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; built a settlement&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">itsXsTurnToRollTheDice</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;&#39;s turn to roll the dice&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">rolled</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; rolled a [0-9]+ and a [0-9]+&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">XplayedAPCard</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; played a &quot;</span> <span style="color: #333333">+</span> (<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(card)) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; card&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">noplayergetsanyt</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;No player gets anything.&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">get</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; gets [0-9]+ &quot;</span> <span style="color: #333333">+</span> (<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(money)), text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">has_resources</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; has [0-9]+ resource&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">XrejectedTradeOffer</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; rejected trade offer&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">XplayedaRoadBuildingCard</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; played a Road Building card&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">XbuiltaA</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; built a &quot;</span> <span style="color: #333333">+</span> (<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(building)), text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">fromX</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;... from &quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">madeanoffertotrade</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; made an offer to trade&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">traded</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; traded [0-9]+ &quot;</span> <span style="color: #333333">+</span> (<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(money)) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; for [0-9]+ &quot;</span> <span style="color: #333333">+</span> (<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(money)) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; from&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">XplayedaMonopolyCard</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; played a Monopoly card&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">Xmonopolized</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; monopolized&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">endedtheirturn</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; ended their turn&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">needsToDiscard</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; needs to discard&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">needToDiscard</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; need to discard&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">discardedXresources</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; discarded [0-9]+ resources&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">willMoveTheRobber</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; will move the robber&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">movedRobberChooseAVictim</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; moved the robber, must choose a victim&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">movedRobber</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; moved the robber&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">stoleAResourceFrom</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; stole a resource from&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #888888"># Dave received 1 ore, 1 sheep from the bank.</span>
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">received</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; received [0-9]+&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">wonthegame</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;has won the game with [0-9]+ points&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">boughtAcard</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; bought a &quot;</span> <span style="color: #333333">+</span> (<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(card)) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; card&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">XleftTheGame</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; left the game&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">hasNpoints</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; has [0-9]+ point&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">cantmaketrade</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;You can&#39;t make that trade&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">youcantmaketrade</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;You can&#39;t make that trade&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">youcantrollnow</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;You can&#39;t roll right now&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">youcantmoverobber</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;You can&#39;t move the robber.&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">is_comment</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(commentWords), text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">contains_emoji</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(emojiManual), text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">contains_resource_name</span>(text):
+    contains <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">for</span> m <span style="color: #000000; font-weight: bold">in</span> money:
+        <span style="color: #008800; font-weight: bold">if</span> m <span style="color: #000000; font-weight: bold">in</span> text:
+            contains <span style="color: #333333">=</span> <span style="color: #007020">True</span>
+            <span style="color: #008800; font-weight: bold">break</span>
+    <span style="color: #008800; font-weight: bold">return</span> contains
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">conditional_start</span>(text):
+    is_cond <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+    first_words <span style="color: #333333">=</span> text<span style="color: #333333">.</span>split(<span style="background-color: #fff0f0">&#39; &#39;</span>)[:<span style="color: #0000DD; font-weight: bold">3</span>]
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;if&#39;</span> <span style="color: #000000; font-weight: bold">in</span> first_words <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;once&#39;</span> <span style="color: #000000; font-weight: bold">in</span> first_words:
+        is_cond <span style="color: #333333">=</span> <span style="color: #007020">True</span>
+    <span style="color: #008800; font-weight: bold">return</span> is_cond
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">is_head</span>(cands_table, turn_id, span_end, node<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;source&#39;</span>):
+    <span style="color: #888888"># check if segment is either the first or the only seg in a turn </span>
+    is_head <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> node <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;source&#39;</span>:
+        first <span style="color: #333333">=</span> cands_table[cands_table<span style="color: #333333">.</span>source_turn_id <span style="color: #333333">==</span> turn_id]<span style="color: #333333">.</span>source_span_end<span style="color: #333333">.</span>drop_duplicates()<span style="color: #333333">.</span>sort_values()<span style="color: #333333">.</span>iloc[<span style="color: #0000DD; font-weight: bold">0</span>]
+    <span style="color: #008800; font-weight: bold">elif</span> node <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;target&#39;</span>:
+        first <span style="color: #333333">=</span> cands_table[cands_table<span style="color: #333333">.</span>target_turn_id <span style="color: #333333">==</span> turn_id]<span style="color: #333333">.</span>target_span_end<span style="color: #333333">.</span>drop_duplicates()<span style="color: #333333">.</span>sort_values()<span style="color: #333333">.</span>iloc[<span style="color: #0000DD; font-weight: bold">0</span>]
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">print</span>(<span style="background-color: #fff0f0">&quot;ERROR&quot;</span>)
+    <span style="color: #008800; font-weight: bold">if</span> span_end <span style="color: #333333">==</span> first:
+        is_head <span style="color: #333333">=</span> <span style="color: #007020">True</span>
+    <span style="color: #008800; font-weight: bold">return</span> is_head
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">get_intervening</span>(cands_table, dialogue_num, source_span_end, target_span_end):
+    <span style="color: #888888">#returns a table of all DUs that occur between a source and a target DU</span>
+    intervening <span style="color: #333333">=</span> cands_table[(cands_table<span style="color: #333333">.</span>dialogue_num <span style="color: #333333">==</span> dialogue_num) 
+            <span style="color: #333333">&amp;</span> (cands_table<span style="color: #333333">.</span>source_span_end <span style="color: #333333">&gt;</span> source_span_end) 
+            <span style="color: #333333">&amp;</span> (cands_table<span style="color: #333333">.</span>source_span_end <span style="color: #333333">&lt;</span> target_span_end)][[<span style="background-color: #fff0f0">&#39;source_id&#39;</span>, <span style="background-color: #fff0f0">&#39;source_emitter&#39;</span>, 
+                <span style="background-color: #fff0f0">&#39;source_type&#39;</span>, <span style="background-color: #fff0f0">&#39;source_text&#39;</span>, <span style="background-color: #fff0f0">&#39;source_dialogue_act&#39;</span>]]<span style="color: #333333">.</span>drop_duplicates()
+    <span style="color: #008800; font-weight: bold">return</span> intervening
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">get_qap_head</span>(cands_table, turn_id, span_end):
+    <span style="color: #888888"># get all nodes in source turn</span>
+    <span style="color: #888888"># if span_end not the first node, return first node index</span>
+    <span style="color: #888888"># else return &#39;H&#39; </span>
+    nodes <span style="color: #333333">=</span> cands_table[cands_table<span style="color: #333333">.</span>source_turn_id <span style="color: #333333">==</span> turn_id][[<span style="background-color: #fff0f0">&#39;source_id&#39;</span>, <span style="background-color: #fff0f0">&#39;source_span_end&#39;</span>]]<span style="color: #333333">.</span>drop_duplicates()<span style="color: #333333">.</span>sort_values(<span style="background-color: #fff0f0">&#39;source_span_end&#39;</span>)
+    <span style="color: #008800; font-weight: bold">if</span> nodes<span style="color: #333333">.</span>shape[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">1</span>:
+        <span style="color: #008800; font-weight: bold">if</span> nodes<span style="color: #333333">.</span>iloc[<span style="color: #0000DD; font-weight: bold">0</span>]<span style="color: #333333">.</span>source_span_end <span style="color: #333333">==</span> span_end:
+            <span style="color: #008800; font-weight: bold">return</span> <span style="background-color: #fff0f0">&#39;H&#39;</span>
+        <span style="color: #008800; font-weight: bold">else</span>:
+            <span style="color: #008800; font-weight: bold">return</span> nodes<span style="color: #333333">.</span>index[<span style="color: #0000DD; font-weight: bold">0</span>]
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="background-color: #fff0f0">&#39;H&#39;</span>
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">hasNpoint</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> <span style="background-color: #fff0f0">&#39;*&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;?&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;)&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;(&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;:&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;[&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text <span style="color: #000000; font-weight: bold">or</span> <span style="background-color: #fff0f0">&#39;]&#39;</span> <span style="color: #000000; font-weight: bold">in</span> text:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; has [0-9]+ point&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">hasgift</span>(text):
+    <span style="color: #008800; font-weight: bold">if</span> re<span style="color: #333333">.</span>search(<span style="background-color: #fff0f0">&quot; has a &quot;</span> <span style="color: #333333">+</span> (<span style="background-color: #fff0f0">&quot;|&quot;</span><span style="color: #333333">.</span>join(gifts)) <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&quot; \(\+1VP\)&quot;</span>, text) <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+</pre></td></tr></table></div>
+
+
+
+
+
+
+
+
+</body>
+</html>
+

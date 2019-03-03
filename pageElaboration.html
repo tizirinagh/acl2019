@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Data Programing for Learning Discourse Structure</title>
+</head>
+<body>
+<h2><a href="index.html"><strong>Home page </a></strong></h2>
+
+
+
+<h1 style="text-align: center;"> Elaboration LF</h1>
+<p style="text-align: right;">Work in progress_ <strong>ACL 2019</strong></p>
+
+<hr />
+
+
+
+
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Elab_LL_case1</span>(row):
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_emitter <span style="color: #333333">==</span> row<span style="color: #333333">.</span>target_emitter: 
+        <span style="color: #008800; font-weight: bold">if</span> (row<span style="color: #333333">.</span>source_surface_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Assertion&quot;</span> <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>target_dialogue_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Offer&quot;</span>) <span style="color: #000000; font-weight: bold">or</span> (row<span style="color: #333333">.</span>source_dialogue_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Offer&quot;</span> <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>target_dialogue_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Offer&quot;</span>) \
+        <span style="color: #000000; font-weight: bold">or</span> (row<span style="color: #333333">.</span>source_dialogue_act <span style="color: #000000; font-weight: bold">in</span> [<span style="background-color: #fff0f0">&quot;Counteroffer&quot;</span>, <span style="background-color: #fff0f0">&quot;Accept&quot;</span>, <span style="background-color: #fff0f0">&quot;Other&quot;</span>] <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>target_dialogue_act <span style="color: #000000; font-weight: bold">in</span> [<span style="background-color: #fff0f0">&quot;Counteroffer&quot;</span>, <span style="background-color: #fff0f0">&quot;Refusal&quot;</span>]) \
+        <span style="color: #000000; font-weight: bold">or</span> (row<span style="color: #333333">.</span>source_dialogue_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Offer&quot;</span> <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>target_surface_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Question&quot;</span>) \
+        <span style="color: #000000; font-weight: bold">or</span> (row<span style="color: #333333">.</span>source_dialogue_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Refusal&quot;</span> <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>target_dialogue_act <span style="color: #000000; font-weight: bold">in</span> [<span style="background-color: #fff0f0">&quot;Refusal&quot;</span>, <span style="background-color: #fff0f0">&quot;Other&quot;</span>]) \
+        <span style="color: #000000; font-weight: bold">or</span> (row<span style="color: #333333">.</span>source_dialogue_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Accept&quot;</span> <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>target_dialogue_act <span style="color: #000000; font-weight: bold">in</span> [<span style="background-color: #fff0f0">&quot;Accept&quot;</span>, <span style="background-color: #fff0f0">&quot;Other&quot;</span>]):
+            l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span> 
+    <span style="color: #008800; font-weight: bold">return</span> l
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Elab_LL_case2</span>(row):
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_emitter <span style="color: #333333">==</span> row<span style="color: #333333">.</span>target_emitter:
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">any</span>(x <span style="color: #000000; font-weight: bold">in</span> row<span style="color: #333333">.</span>source_text<span style="color: #333333">.</span>lower() <span style="color: #008800; font-weight: bold">for</span> x <span style="color: #000000; font-weight: bold">in</span> [<span style="background-color: #fff0f0">&quot;mmm&quot;</span>, <span style="background-color: #fff0f0">&quot;arrrrrgh&quot;</span>, <span style="background-color: #fff0f0">&quot;sorry&quot;</span>, <span style="background-color: #fff0f0">&quot;well&quot;</span>, <span style="background-color: #fff0f0">&quot;man&quot;</span>,<span style="background-color: #fff0f0">&quot;yup&quot;</span>,<span style="background-color: #fff0f0">&quot;ouch&quot;</span>, <span style="background-color: #fff0f0">&quot;lol&quot;</span>, <span style="background-color: #fff0f0">&quot;oh&quot;</span>, <span style="background-color: #fff0f0">&quot;ugh&quot;</span>, <span style="background-color: #fff0f0">&quot;no worries&quot;</span>,<span style="background-color: #fff0f0">&quot;cool&quot;</span> , <span style="background-color: #fff0f0">&quot;fingers crossed&quot;</span>, <span style="background-color: #fff0f0">&quot;actually no&quot;</span>,<span style="background-color: #fff0f0">&quot;whoa&quot;</span>, <span style="background-color: #fff0f0">&quot;wow&quot;</span>, <span style="background-color: #fff0f0">&quot;yeah&quot;</span>,<span style="background-color: #fff0f0">&quot;yep&quot;</span>]) \
+        <span style="color: #000000; font-weight: bold">and</span> (row<span style="color: #333333">.</span>target_surface_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Assertion&quot;</span>):
+            l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Elab_LL_case3</span>(row):
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_emitter <span style="color: #333333">==</span> row<span style="color: #333333">.</span>target_emitter:
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">any</span>(x <span style="color: #000000; font-weight: bold">in</span> row<span style="color: #333333">.</span>source_text<span style="color: #333333">.</span>lower() <span style="color: #008800; font-weight: bold">for</span> x <span style="color: #000000; font-weight: bold">in</span> money) <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>source_surface_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Question&quot;</span> \
+        <span style="color: #000000; font-weight: bold">and</span> (<span style="color: #007020">any</span>( x <span style="color: #000000; font-weight: bold">in</span> row<span style="color: #333333">.</span>target_text<span style="color: #333333">.</span>lower() <span style="color: #008800; font-weight: bold">for</span> x <span style="color: #000000; font-weight: bold">in</span> [<span style="background-color: #fff0f0">&quot;give&quot;</span>, <span style="background-color: #fff0f0">&quot;i&#39;ll&quot;</span>, <span style="background-color: #fff0f0">&quot;i will&quot;</span>, <span style="background-color: #fff0f0">&quot;i have&quot;</span>]) \
+             <span style="color: #000000; font-weight: bold">or</span> (row<span style="color: #333333">.</span>target_surface_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&quot;Assertion&quot;</span>)):
+            l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+</pre></td></tr></table></div>
+
+
+
+
+
+<p>- Set of rules.</p>
+<hr />
+
+
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #888888">#1 -- get dialogues</span>
+finals <span style="color: #333333">=</span> []
+dialogues <span style="color: #333333">=</span> cands<span style="color: #333333">.</span>dialogue_num<span style="color: #333333">.</span>drop_duplicates()
+
+<span style="color: #008800; font-weight: bold">for</span> d <span style="color: #000000; font-weight: bold">in</span> tqdm(dialogues):
+    
+    <span style="color: #888888">#segments are not allowed to be the sources of more than one elaboration</span>
+    source_memo <span style="color: #333333">=</span> []
+    target_memo <span style="color: #333333">=</span> []
+ 
+    <span style="color: #888888"># 2 -- get segment list</span>
+    seg_list <span style="color: #333333">=</span> get_seg_list(cands[cands<span style="color: #333333">.</span>dialogue_num <span style="color: #333333">==</span> d])
+
+    <span style="color: #888888"># 3 -- create seg pairs list</span>
+    seg_pairs <span style="color: #333333">=</span> []
+    <span style="color: #008800; font-weight: bold">for</span> i, s <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">enumerate</span>(seg_list):
+        <span style="color: #008800; font-weight: bold">for</span> n <span style="color: #000000; font-weight: bold">in</span> [j <span style="color: #008800; font-weight: bold">for</span> j <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">reversed</span>(<span style="color: #007020">range</span>((i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">20</span>, i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)) <span style="color: #008800; font-weight: bold">if</span> j<span style="color: #333333">&gt;=</span><span style="color: #0000DD; font-weight: bold">0</span>]:
+            <span style="color: #008800; font-weight: bold">try</span>:
+                seg_pairs<span style="color: #333333">.</span>append((seg_list[n], seg_list[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>]))   
+            <span style="color: #008800; font-weight: bold">except</span> <span style="color: #FF0000; font-weight: bold">IndexError</span>:
+                <span style="color: #008800; font-weight: bold">pass</span>
+            
+    <span style="color: #888888"># 4 -- for each pair, pull row and append rules</span>
+
+    <span style="color: #008800; font-weight: bold">for</span> s <span style="color: #000000; font-weight: bold">in</span> seg_pairs:
+        row <span style="color: #333333">=</span> cands[(cands<span style="color: #333333">.</span>source_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">0</span>]) <span style="color: #333333">&amp;</span> (cands<span style="color: #333333">.</span>target_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">1</span>])]
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>empty:
+            <span style="color: #008800; font-weight: bold">continue</span>
+        <span style="color: #008800; font-weight: bold">else</span>:
+            r_index <span style="color: #333333">=</span> row<span style="color: #333333">.</span>index[<span style="color: #0000DD; font-weight: bold">0</span>]
+            row <span style="color: #333333">=</span> row<span style="color: #333333">.</span>iloc[<span style="color: #0000DD; font-weight: bold">0</span>]
+        
+        <span style="color: #888888"># make sure that if any backwards links exist they are also 0</span>
+            
+        backwards <span style="color: #333333">=</span> cands[(cands<span style="color: #333333">.</span>source_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">1</span>]) <span style="color: #333333">&amp;</span> (cands<span style="color: #333333">.</span>target_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">0</span>])]
+        <span style="color: #008800; font-weight: bold">if</span> backwards<span style="color: #333333">.</span>shape[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            b_index <span style="color: #333333">=</span> backwards<span style="color: #333333">.</span>index[<span style="color: #0000DD; font-weight: bold">0</span>]
+            finals<span style="color: #333333">.</span>append((b_index, <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>))
+            
+        
+        <span style="color: #888888">#we only look at ling --&gt; ling cases</span>
+        
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_type <span style="color: #333333">!=</span> <span style="background-color: #fff0f0">&#39;Segment&#39;</span> <span style="color: #000000; font-weight: bold">or</span> row<span style="color: #333333">.</span>target_type <span style="color: #333333">!=</span> <span style="background-color: #fff0f0">&#39;Segment&#39;</span>:
+            
+            link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>  
+            
+        <span style="color: #008800; font-weight: bold">else</span>: 
+        
+            <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>distance <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #000000; font-weight: bold">and</span> (LF_Elab_LL_case1(row) <span style="color: #000000; font-weight: bold">or</span> LF_Elab_LL_case2(row) <span style="color: #000000; font-weight: bold">or</span> LF_Elab_LL_case3(row)):
+                <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_id <span style="color: #000000; font-weight: bold">in</span> source_memo <span style="color: #000000; font-weight: bold">or</span> row<span style="color: #333333">.</span>target_id <span style="color: #000000; font-weight: bold">in</span> target_memo:
+                    link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+                <span style="color: #008800; font-weight: bold">else</span>:
+                    source_memo<span style="color: #333333">.</span>append(row<span style="color: #333333">.</span>source_id)
+                    target_memo<span style="color: #333333">.</span>append(row<span style="color: #333333">.</span>target_id)
+                    link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>      
+            <span style="color: #008800; font-weight: bold">else</span>:
+                
+                link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+   
+                    
+        finals<span style="color: #333333">.</span>append((r_index, link))
+                
+</pre></td></tr></table></div>
+
+
+
+
+
+
+<p>- Applying the rules to candidates.</p>
+<hr />
+
+
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Elab_NLNL_case1</span>(row):
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> (madeanoffertotrade(row<span style="color: #333333">.</span>source_text) <span style="color: #000000; font-weight: bold">and</span> fromX(row<span style="color: #333333">.</span>target_text)):
+        l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Elab_NLNL_case2</span>(row):
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> hasNpoint(row<span style="color: #333333">.</span>source_text) <span style="color: #000000; font-weight: bold">and</span> is_head(cands, row<span style="color: #333333">.</span>source_turn_id, row<span style="color: #333333">.</span>source_span_end) <span style="color: #000000; font-weight: bold">and</span> hasgift(row<span style="color: #333333">.</span>target_text):
+        l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Elab_NLNL_case3</span>(row):
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> wonthegame(row<span style="color: #333333">.</span>source_text) <span style="color: #000000; font-weight: bold">and</span> hasNpoint(row<span style="color: #333333">.</span>target_text) <span style="color: #000000; font-weight: bold">and</span> is_head(cands, row<span style="color: #333333">.</span>target_turn_id, row<span style="color: #333333">.</span>target_span_end, <span style="background-color: #fff0f0">&quot;target&quot;</span>):
+        l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+</pre></td></tr></table></div>
+
+
+
+
+
+<p>- Set of rules.</p>
+<hr />
+
+
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #888888">#1 -- get dialogues</span>
+finals <span style="color: #333333">=</span> []
+dialogues <span style="color: #333333">=</span> cands<span style="color: #333333">.</span>dialogue_num<span style="color: #333333">.</span>drop_duplicates()
+<span style="color: #888888">#dialogues = [563]</span>
+
+<span style="color: #008800; font-weight: bold">for</span> d <span style="color: #000000; font-weight: bold">in</span> tqdm(dialogues):
+    
+    source_memo <span style="color: #333333">=</span> []
+    target_memo <span style="color: #333333">=</span> []
+ 
+    <span style="color: #888888"># 2 -- get segment list</span>
+    seg_list <span style="color: #333333">=</span> get_seg_list(cands[cands<span style="color: #333333">.</span>dialogue_num <span style="color: #333333">==</span> d])
+
+    <span style="color: #888888"># 3 -- create seg pairs list</span>
+    seg_pairs <span style="color: #333333">=</span> []
+    <span style="color: #008800; font-weight: bold">for</span> i, s <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">enumerate</span>(seg_list):
+        <span style="color: #008800; font-weight: bold">for</span> n <span style="color: #000000; font-weight: bold">in</span> [j <span style="color: #008800; font-weight: bold">for</span> j <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">reversed</span>(<span style="color: #007020">range</span>((i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">20</span>, i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)) <span style="color: #008800; font-weight: bold">if</span> j<span style="color: #333333">&gt;=</span><span style="color: #0000DD; font-weight: bold">0</span>]:
+            <span style="color: #008800; font-weight: bold">try</span>:
+                seg_pairs<span style="color: #333333">.</span>append((seg_list[n], seg_list[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>]))   
+            <span style="color: #008800; font-weight: bold">except</span> <span style="color: #FF0000; font-weight: bold">IndexError</span>:
+                <span style="color: #008800; font-weight: bold">pass</span>
+            
+    <span style="color: #888888"># 4 -- for each pair, pull row and append rules</span>
+
+    <span style="color: #008800; font-weight: bold">for</span> s <span style="color: #000000; font-weight: bold">in</span> seg_pairs:
+        row <span style="color: #333333">=</span> cands[(cands<span style="color: #333333">.</span>source_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">0</span>]) <span style="color: #333333">&amp;</span> (cands<span style="color: #333333">.</span>target_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">1</span>])]
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>empty:
+            <span style="color: #008800; font-weight: bold">continue</span>
+        <span style="color: #008800; font-weight: bold">else</span>:
+            r_index <span style="color: #333333">=</span> row<span style="color: #333333">.</span>index[<span style="color: #0000DD; font-weight: bold">0</span>]
+            row <span style="color: #333333">=</span> row<span style="color: #333333">.</span>iloc[<span style="color: #0000DD; font-weight: bold">0</span>]
+        
+        <span style="color: #888888"># make sure that if any backwards links exist they are also 0</span>
+            
+        backwards <span style="color: #333333">=</span> cands[(cands<span style="color: #333333">.</span>source_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">1</span>]) <span style="color: #333333">&amp;</span> (cands<span style="color: #333333">.</span>target_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">0</span>])]
+        <span style="color: #008800; font-weight: bold">if</span> backwards<span style="color: #333333">.</span>shape[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            b_index <span style="color: #333333">=</span> backwards<span style="color: #333333">.</span>index[<span style="color: #0000DD; font-weight: bold">0</span>]
+            finals<span style="color: #333333">.</span>append((b_index, <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>))
+            
+        
+        <span style="color: #888888">#we only look at ling --&gt; ling cases</span>
+        
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_type <span style="color: #333333">!=</span> <span style="background-color: #fff0f0">&#39;NonplayerSegment&#39;</span> <span style="color: #000000; font-weight: bold">or</span> row<span style="color: #333333">.</span>target_type <span style="color: #333333">!=</span> <span style="background-color: #fff0f0">&#39;NonplayerSegment&#39;</span>:
+            
+            link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>  
+            
+        <span style="color: #008800; font-weight: bold">else</span>: 
+            
+            <span style="color: #008800; font-weight: bold">if</span> LF_Elab_NLNL_case1(row) <span style="color: #000000; font-weight: bold">or</span> LF_Elab_NLNL_case2(row) <span style="color: #000000; font-weight: bold">or</span> LF_Elab_NLNL_case3(row):
+                <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>target_id <span style="color: #000000; font-weight: bold">in</span> target_memo:
+                    link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+                <span style="color: #008800; font-weight: bold">else</span>:
+                    target_memo<span style="color: #333333">.</span>append(row<span style="color: #333333">.</span>target_id)
+                    link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span> 
+            <span style="color: #008800; font-weight: bold">else</span>:
+                
+                link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+   
+                    
+        finals<span style="color: #333333">.</span>append((r_index, link))
+                
+</pre></td></tr></table></div>
+
+
+
+
+
+
+<p>- Applying the rules to candidates.</p>
+<hr />
+
+</body>
+</html>
+

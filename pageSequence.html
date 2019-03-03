@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Data Programing for Learning Discourse Structure</title>
+</head>
+<body>
+<h2><a href="index.html"><strong>Home page </a></strong></h2>
+
+
+
+<h1 style="text-align: center;"> Sequence LF</h1>
+<p style="text-align: right;">Work in progress_ <strong>ACL 2019</strong></p>
+
+<hr />
+
+
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Seq_NL_L_case1</span>(row):
+    <span style="color: #888888">#case 1 -- might be tagging a lot of results </span>
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> has_resources(row<span style="color: #333333">.</span>source_text):
+        <span style="color: #008800; font-weight: bold">if</span> is_head(cands, row<span style="color: #333333">.</span>source_turn_id, row<span style="color: #333333">.</span>source_span_end) <span style="color: #000000; font-weight: bold">and</span> contains_resource_name(row<span style="color: #333333">.</span>target_text):
+            l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Seq_NL_L_case2</span>(row):
+    <span style="color: #888888">#case 2</span>
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> XbuiltaA(row<span style="color: #333333">.</span>source_text) <span style="color: #000000; font-weight: bold">or</span> boughtAcard(row<span style="color: #333333">.</span>source_text) <span style="color: #000000; font-weight: bold">or</span> willMoveTheRobber(row<span style="color: #333333">.</span>source_text):
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>target_emitter <span style="color: #333333">==</span> row<span style="color: #333333">.</span>source_text<span style="color: #333333">.</span>split(<span style="background-color: #fff0f0">&#39; &#39;</span>)[<span style="color: #0000DD; font-weight: bold">0</span>]:
+            l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Seq_NL_L_case3</span>(row):
+    <span style="color: #888888">#case 3</span>
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> traded(row<span style="color: #333333">.</span>source_text) <span style="color: #000000; font-weight: bold">and</span> <span style="color: #000000; font-weight: bold">not</span> stoleAResourceFrom(row<span style="color: #333333">.</span>source_text):
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_text<span style="color: #333333">.</span>split(<span style="background-color: #fff0f0">&#39; &#39;</span>)[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">==</span> row<span style="color: #333333">.</span>target_emitter <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>target_dialogue_act <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;Offer&#39;</span> <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>distance <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>:
+            l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Seq_NL_L_case4</span>(row):
+    <span style="color: #888888">#case 4 -- x sat down then next move is EDU by X</span>
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> satDownAtSeat(row<span style="color: #333333">.</span>source_text):
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>target_emitter <span style="color: #333333">==</span> row<span style="color: #333333">.</span>source_text<span style="color: #333333">.</span>split(<span style="background-color: #fff0f0">&#39; &#39;</span>)[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>distance <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span>:
+            l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+</pre></td></tr></table></div>
+
+
+<p> Description goes here: set of rules</p>
+<hr />
+
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #888888">#1 -- get dialogues</span>
+finals <span style="color: #333333">=</span> []
+dialogues <span style="color: #333333">=</span> cands<span style="color: #333333">.</span>dialogue_num<span style="color: #333333">.</span>drop_duplicates()
+
+<span style="color: #008800; font-weight: bold">for</span> d <span style="color: #000000; font-weight: bold">in</span> tqdm(dialogues):
+    
+    <span style="color: #888888">#keep track of marked relations -- because we assume that each node can only take part in one sequence relation</span>
+    memo <span style="color: #333333">=</span> []
+    <span style="color: #888888"># 2 -- get segment list</span>
+    seg_list <span style="color: #333333">=</span> get_seg_list(cands[cands<span style="color: #333333">.</span>dialogue_num <span style="color: #333333">==</span> d])
+
+    <span style="color: #888888"># 3 -- create seg pairs list</span>
+    seg_pairs <span style="color: #333333">=</span> []
+    <span style="color: #008800; font-weight: bold">for</span> i, s <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">enumerate</span>(seg_list):
+        <span style="color: #008800; font-weight: bold">for</span> n <span style="color: #000000; font-weight: bold">in</span> [j <span style="color: #008800; font-weight: bold">for</span> j <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">reversed</span>(<span style="color: #007020">range</span>((i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">20</span>, i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)) <span style="color: #008800; font-weight: bold">if</span> j<span style="color: #333333">&gt;=</span><span style="color: #0000DD; font-weight: bold">0</span>]:
+            <span style="color: #008800; font-weight: bold">try</span>:
+                seg_pairs<span style="color: #333333">.</span>append((seg_list[n], seg_list[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>]))   
+            <span style="color: #008800; font-weight: bold">except</span> <span style="color: #FF0000; font-weight: bold">IndexError</span>:
+                <span style="color: #008800; font-weight: bold">pass</span>
+            
+    <span style="color: #888888"># 4 -- for each pair, pull row and append rules</span>
+    <span style="color: #008800; font-weight: bold">for</span> s <span style="color: #000000; font-weight: bold">in</span> seg_pairs:
+        row <span style="color: #333333">=</span> cands[(cands<span style="color: #333333">.</span>source_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">0</span>]) <span style="color: #333333">&amp;</span> (cands<span style="color: #333333">.</span>target_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">1</span>])]
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>empty:
+            <span style="color: #008800; font-weight: bold">continue</span>
+        <span style="color: #008800; font-weight: bold">else</span>:
+            r_index <span style="color: #333333">=</span> row<span style="color: #333333">.</span>index[<span style="color: #0000DD; font-weight: bold">0</span>]
+            row <span style="color: #333333">=</span> row<span style="color: #333333">.</span>iloc[<span style="color: #0000DD; font-weight: bold">0</span>]
+        
+        <span style="color: #888888"># make sure that if any backwards links exist they are also 0</span>
+            
+        backwards <span style="color: #333333">=</span> cands[(cands<span style="color: #333333">.</span>source_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">1</span>]) <span style="color: #333333">&amp;</span> (cands<span style="color: #333333">.</span>target_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">0</span>])]
+        <span style="color: #008800; font-weight: bold">if</span> backwards<span style="color: #333333">.</span>shape[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            b_index <span style="color: #333333">=</span> backwards<span style="color: #333333">.</span>index[<span style="color: #0000DD; font-weight: bold">0</span>]
+            finals<span style="color: #333333">.</span>append((b_index, <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>))
+            
+        
+        <span style="color: #888888">#we only look at ling --&gt; ling cases</span>
+        
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_type <span style="color: #333333">!=</span> <span style="background-color: #fff0f0">&#39;NonplayerSegment&#39;</span> <span style="color: #000000; font-weight: bold">or</span> row<span style="color: #333333">.</span>target_type <span style="color: #333333">!=</span> <span style="background-color: #fff0f0">&#39;Segment&#39;</span>:
+            
+            link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>  
+            
+        <span style="color: #008800; font-weight: bold">else</span>: 
+            
+            <span style="color: #888888">#try each of three cases, keeping track of the candidates which have been used in a sequence relation already</span>
+        
+            <span style="color: #008800; font-weight: bold">if</span> LF_Seq_NL_L_case1(row) <span style="color: #000000; font-weight: bold">or</span> LF_Seq_NL_L_case2(row) <span style="color: #000000; font-weight: bold">or</span> LF_Seq_NL_L_case3(row) <span style="color: #000000; font-weight: bold">or</span> LF_Seq_NL_L_case4(row):
+            <span style="color: #888888">#if LF_Seq_NL_L_case3(row):</span>
+                <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_id <span style="color: #000000; font-weight: bold">in</span> memo <span style="color: #000000; font-weight: bold">or</span> row<span style="color: #333333">.</span>target_id <span style="color: #000000; font-weight: bold">in</span> memo: 
+                    link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+                <span style="color: #008800; font-weight: bold">else</span>:
+                    link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>
+                    memo<span style="color: #333333">.</span>extend([row<span style="color: #333333">.</span>source_id, row<span style="color: #333333">.</span>target_id])
+            <span style="color: #008800; font-weight: bold">else</span>:
+                link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+                    
+        finals<span style="color: #333333">.</span>append((r_index, link))
+                
+</pre></td></tr></table></div>
+
+
+
+
+<p>- Applying rules.</p>
+<hr />
+
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #888888">#NB: the false positives that come from these rules are in part due to the rule not being able to see whether </span>
+<span style="color: #888888">#there has already been a sequence relation added to between an EEU node and an intervening EDU node, which wouldn&#39;t </span>
+<span style="color: #888888">#show up in the NL-NL case</span>
+
+<span style="color: #888888">#TODO!! Figure out why we are missing the first eeus in the candidates.</span>
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Seq_NL_NL_case1</span>(row):
+    <span style="color: #888888">#&#39;has resources&#39; to next eeu</span>
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_turn_id <span style="color: #333333">!=</span> row<span style="color: #333333">.</span>target_turn_id <span style="color: #000000; font-weight: bold">and</span> has_resources(row<span style="color: #333333">.</span>source_text):
+        <span style="color: #008800; font-weight: bold">if</span> is_head(cands, row<span style="color: #333333">.</span>source_turn_id, row<span style="color: #333333">.</span>source_span_end):
+            l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Seq_NL_NL_case2</span>(row):
+    <span style="color: #888888">#target = X ended their turn to most recent &#39;X&#39; eeu</span>
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> endedtheirturn(row<span style="color: #333333">.</span>target_text):
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #000000; font-weight: bold">not</span> has_resources(row<span style="color: #333333">.</span>source_text) <span style="color: #000000; font-weight: bold">and</span> <span style="color: #000000; font-weight: bold">not</span> stoleAResourceFrom(row<span style="color: #333333">.</span>source_text):
+            <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>target_text<span style="color: #333333">.</span>split(<span style="background-color: #fff0f0">&#39; &#39;</span>)[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">==</span> row<span style="color: #333333">.</span>source_text<span style="color: #333333">.</span>split(<span style="background-color: #fff0f0">&#39; &#39;</span>)[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #000000; font-weight: bold">and</span> row<span style="color: #333333">.</span>distance <span style="color: #333333">&lt;=</span> <span style="color: #0000DD; font-weight: bold">3</span>:
+                l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">else</span>:
+            l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Seq_NL_NL_case3</span>(row):
+    <span style="color: #888888">#For ever mid-game set of moves where each turn == 1 segment and distance == 1</span>
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>distance <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #000000; font-weight: bold">and</span> <span style="color: #000000; font-weight: bold">not</span> has_resources(row<span style="color: #333333">.</span>source_text) \
+    <span style="color: #000000; font-weight: bold">and</span> <span style="color: #000000; font-weight: bold">not</span> youcantmaketrade(row<span style="color: #333333">.</span>source_text) <span style="color: #000000; font-weight: bold">and</span> <span style="color: #000000; font-weight: bold">not</span> stoleAResourceFrom(row<span style="color: #333333">.</span>source_text):
+        l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+   
+    
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">LF_Seq_NL_NL_case4</span>(row):
+    <span style="color: #888888">#For beginning game moves -- if target is &quot;sat down at&quot; or &quot;game started&quot;</span>
+    l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>
+    <span style="color: #008800; font-weight: bold">if</span> satDownAtSeat(row<span style="color: #333333">.</span>target_text) <span style="color: #000000; font-weight: bold">or</span> joinedTheGame(row<span style="color: #333333">.</span>target_text) <span style="color: #000000; font-weight: bold">or</span> gamestarted(row<span style="color: #333333">.</span>target_text):
+        l<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">return</span> l
+</pre></td></tr></table></div>
+
+
+
+
+
+
+
+<p>- Set of rules.</p>
+<hr />
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #888888">#1 -- get dialogues</span>
+finals <span style="color: #333333">=</span> []
+dialogues <span style="color: #333333">=</span> cands<span style="color: #333333">.</span>dialogue_num<span style="color: #333333">.</span>drop_duplicates()
+<span style="color: #888888">#dialogues = [98]</span>
+
+<span style="color: #008800; font-weight: bold">for</span> d <span style="color: #000000; font-weight: bold">in</span> tqdm(dialogues):
+    
+    <span style="color: #888888">#keep track of dus involved in a seq as source or target -- on du cannot be source or target for &gt; 1 seq rel</span>
+    memo_source <span style="color: #333333">=</span> []
+    memo_target <span style="color: #333333">=</span> []
+ 
+    <span style="color: #888888"># 2 -- get segment list</span>
+    seg_list <span style="color: #333333">=</span> get_seg_list(cands[cands<span style="color: #333333">.</span>dialogue_num <span style="color: #333333">==</span> d])
+
+    <span style="color: #888888"># 3 -- create seg pairs list</span>
+    seg_pairs <span style="color: #333333">=</span> []
+    <span style="color: #008800; font-weight: bold">for</span> i, s <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">enumerate</span>(seg_list):
+        <span style="color: #008800; font-weight: bold">for</span> n <span style="color: #000000; font-weight: bold">in</span> [j <span style="color: #008800; font-weight: bold">for</span> j <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">reversed</span>(<span style="color: #007020">range</span>((i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">20</span>, i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)) <span style="color: #008800; font-weight: bold">if</span> j<span style="color: #333333">&gt;=</span><span style="color: #0000DD; font-weight: bold">0</span>]:
+            <span style="color: #008800; font-weight: bold">try</span>:
+                seg_pairs<span style="color: #333333">.</span>append((seg_list[n], seg_list[i<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>]))   
+            <span style="color: #008800; font-weight: bold">except</span> <span style="color: #FF0000; font-weight: bold">IndexError</span>:
+                <span style="color: #008800; font-weight: bold">pass</span>
+            
+    <span style="color: #888888"># 4 -- for each pair, pull row and append rules</span>
+
+    <span style="color: #008800; font-weight: bold">for</span> s <span style="color: #000000; font-weight: bold">in</span> seg_pairs:
+        row <span style="color: #333333">=</span> cands[(cands<span style="color: #333333">.</span>source_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">0</span>]) <span style="color: #333333">&amp;</span> (cands<span style="color: #333333">.</span>target_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">1</span>])]
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>empty:
+            <span style="color: #008800; font-weight: bold">continue</span>
+        <span style="color: #008800; font-weight: bold">else</span>:
+            r_index <span style="color: #333333">=</span> row<span style="color: #333333">.</span>index[<span style="color: #0000DD; font-weight: bold">0</span>]
+            row <span style="color: #333333">=</span> row<span style="color: #333333">.</span>iloc[<span style="color: #0000DD; font-weight: bold">0</span>]
+        
+        <span style="color: #888888"># make sure that if any backwards links exist they are also 0</span>
+            
+        backwards <span style="color: #333333">=</span> cands[(cands<span style="color: #333333">.</span>source_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">1</span>]) <span style="color: #333333">&amp;</span> (cands<span style="color: #333333">.</span>target_id <span style="color: #333333">==</span> s[<span style="color: #0000DD; font-weight: bold">0</span>])]
+        <span style="color: #008800; font-weight: bold">if</span> backwards<span style="color: #333333">.</span>shape[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            b_index <span style="color: #333333">=</span> backwards<span style="color: #333333">.</span>index[<span style="color: #0000DD; font-weight: bold">0</span>]
+            finals<span style="color: #333333">.</span>append((b_index, <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>))
+            
+        
+        <span style="color: #888888">#we only look at ling --&gt; ling cases</span>
+        
+        <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>source_type <span style="color: #333333">!=</span> <span style="background-color: #fff0f0">&#39;NonplayerSegment&#39;</span> <span style="color: #000000; font-weight: bold">or</span> row<span style="color: #333333">.</span>target_type <span style="color: #333333">!=</span> <span style="background-color: #fff0f0">&#39;NonplayerSegment&#39;</span>:
+            
+            link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>  
+            
+        <span style="color: #008800; font-weight: bold">else</span>: 
+            
+            <span style="color: #888888">#if LF_Seq_NL_NL_case3(row):</span>
+            <span style="color: #008800; font-weight: bold">if</span> LF_Seq_NL_NL_case1(row) <span style="color: #000000; font-weight: bold">or</span> LF_Seq_NL_NL_case2(row) <span style="color: #000000; font-weight: bold">or</span> LF_Seq_NL_NL_case3(row) <span style="color: #000000; font-weight: bold">or</span> LF_Seq_NL_NL_case4(row):
+                <span style="color: #008800; font-weight: bold">if</span> row<span style="color: #333333">.</span>target_id <span style="color: #000000; font-weight: bold">in</span> memo_target <span style="color: #000000; font-weight: bold">or</span> row<span style="color: #333333">.</span>source_id <span style="color: #000000; font-weight: bold">in</span> memo_source:
+                    link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+                <span style="color: #008800; font-weight: bold">else</span>:
+                    link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>
+                    memo_target<span style="color: #333333">.</span>append(row<span style="color: #333333">.</span>target_id)
+                    memo_source<span style="color: #333333">.</span>append(row<span style="color: #333333">.</span>source_id) 
+            <span style="color: #008800; font-weight: bold">else</span>:
+                link <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+               
+        finals<span style="color: #333333">.</span>append((r_index, link))
+                
+</pre></td></tr></table></div>
+
+
+
+<p>- Applying rules.</p>
+<hr />
+
+
+</body>
+</html>
+
