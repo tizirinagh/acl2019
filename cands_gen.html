@@ -26,13 +26,10 @@
 -->
 <h2><u>Candidate ordering</u></h2>
 
-<p>Candidates are the units of data for which labels are predicted: they are pairs of dialogue units occurring in the same dialogue between which an attachment is possible. The LFs use "local" information to determine whether the dialogue units in a candidate are attached, such as dialogue unit type, speaker identity, raw text, dialogue and speech acts and distance between units.</p> 
-<p>However, in order to write LFs that might truly express the expert knowledge need to annotate the dialogues, we needed to give them access to more "global" contextual information, such as what has happened in the dialogue thus far, and between the units; what has been said, what attachments have already been made, etc. Indeed, this sort of contextual information becomes unweildy and not easily formatted for use by labeling functions. Our present solution is to fix the order in which each LF can "see" the candidates, such that it condiers adjacent DUs before distant DUs, and thus "knows" its current position in a dialogue. We also allowed LFs to keep track of previously predicted relations to give them some information about dialogue history.
-</p>
+<p>Candidates are pairs of dialogue units occurring in the same dialogue between which an attachment is possible, and are the units of data for which labels are predicted. The LFs use "local" information to determine whether the dialogue units in a candidate are attached, such as dialogue unit type, speaker identity, raw text, dialogue and speech acts and distance between units. The LFs are also given access to some "global" contexutal information, such as location in a dialgoue, and what has been said/ what attachments have been predicted in the dialogue up to that point.</p>
 
-<h4>Algorithm</h4>
-<p><strong>Ex.</strong> Given dialogue D with DUs A, B, C, D, appearing in that order, the set of possible candidates C is: {(A,B), (A,C), (A,D), (B,C), (B,D) and (C,D)}.</p>
-<p>To put the candidates in order of salient previous information, we use the code below, which for dialogue D would yield the following ordered list of candidates O: <br>[(A,B), (B,C), (A,C), (C,D), (B,D), (A,D)]</p>
+<p><strong>Ex.</strong> Given dialogue X with DUs A, B, C, D, appearing in that order, the set of possible candidates Y is: {(A,B), (A,C), (A,D), (B,C), (B,D) and (C,D)}.</p>
+<p>We put the candidates in order of salient previous information using the code below, which for dialogue X yields the following ordered list of candidates O: <br>[(A,B), (B,C), (A,C), (C,D), (B,D), (A,D)]</p>
 <p>As an LF is applied to O, it first sees, for each target unit, the immediately preceding source unit, followed by the source units at incrementally increasing distances to the target unit. Chronolgically speaking, an LF considers the immediate present before moving into the past of a dialogue, where it considers everything which took place before.</p>
 <p><strong>get_seg_list</strong> takes all of the source and target DUs in a dialogue and orders them chronologically.</p>
 <hr />
