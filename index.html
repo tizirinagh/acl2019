@@ -23,8 +23,10 @@
 <li><a href="pageSequence.html">Sequence LF </a></li>
 </ul>
 <p><a href="helperfunctions.html">*Helper functions (called by LF functions)</a></p>
+<!--
 <h2><u>Visualizations</u></h2>
-<p><a href="stac_graphs_dev_all9/graphs.html"> Link</a>  to the graphic representationsof the outputs of our LFs on the full development set.</p>
+<p><a href="stac_graphs_dev_all9/graphs.html"> Link</a>  to the graphic representations of the outputs of our LFs on the full development set.</p>
+-->
 <h2 id="Performances"><u>LF performances on the STAC development set</u></h2>
 <p align="justify">In order to write a set of LFs/rules which adequately covered the data, we had to find a way to reasonably divide and conquer the myriad characteristics of the relations. We started by focusing on relation type: for each of the nine most frequent relation types, we wrote a separate rule for each of the sets of endpoint types most prevalent for that relation. <strong>Result</strong> (RES) is the only relation type which was found between all four endpoint permutations: LL (linguistic source-linguistic target), LNL (linguistic source, non-linguistic target), etc..</p>
 <palign="justify">We used the relation behavoir observed in our development set to write and revise the rules. The dev set consisted of 3 games (10% of our data). In order to reduce run-time for each rule during development, we created "sandbox" sets for each relation type: smaller versions of the dev set which ignored all candidate pairs except those which could possibly be attached by the relation type in question.The table below shows the performance of each rule on its own "sandbox" dev set.</p>
